@@ -14,18 +14,26 @@ data = load_data(file_path)
 # Define as opções de filtro
 available_columns = [
     'Director', 'Writer', 'Main Genres', 'Motion Picture Rating',
-    'Release Year', 'Rating', 'Number of Ratings', 'Budget',
+    'Rating', 'Number of Ratings', 'Budget',
     'Gross in US & Canada', 'Gross worldwide', 'Opening Weekend Gross in US & Canada'
 ]
+
+# Adicionando a opção 'Release Year' de filtragem condicionalmente
+if 'Release Year' in data.columns:
+    available_columns.append('Release Year')
 
 # Seleciona a coluna para filtro
 selected_column = st.sidebar.selectbox('Selecione a coluna para filtro:', available_columns)
 
 # Filtro por valor na coluna selecionada
-filter_value = st.sidebar.text_input(f'Filtrar por {selected_column}:')
+filter_value = ""
+if selected_column != 'Release Year':
+    filter_value = st.sidebar.text_input(f'Filtrar por {selected_column}:')
 
 # Aplica a filtragem
-if filter_value:  # Verifica se há algum valor no campo de filtro
+if filter_value or selected_column == 'Release Year':
+    if selected_column == 'Release Year':
+        filter_value = st.sidebar.text_input(f'Filtrar por {selected_column}:')
     filtered_data = data[data[selected_column].astype(str).str.contains(filter_value, na=False)]
     
     # Exibir estatísticas básicas dos dados filtrados
