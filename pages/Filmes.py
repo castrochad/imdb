@@ -11,28 +11,34 @@ def load_data(file_path):
 file_path = 'IMDbMovies.csv'
 data = load_data(file_path)
 
-# Filtro por valores não nulos na coluna 'Rating' e 'Release Year'
-filtered_data = data[(data['Rating'].notnull()) & (data['Release Year'].notnull())]
+# Obter as colunas de dados inteiros e categóricos
+integer_columns = data.select_dtypes(include='int64').columns.tolist()
+string_columns = data.select_dtypes(include='object').columns.tolist()
 
-# Converter a coluna 'Release Year' para o tipo inteiro (caso não esteja)
-filtered_data['Release Year'] = filtered_data['Release Year'].astype(int)
+# Sidebar para selecionar o tipo de gráfico e a coluna
+chart_type = st.sidebar.selectbox('Selecione o tipo de gráfico:', ['Barra', 'Dispersão'])
+selected_column = st.sidebar.selectbox('Selecione a coluna:', string_columns + integer_columns)
 
-# Converter a coluna 'Rating' para numérico
-filtered_data['Rating'] = pd.to_numeric(filtered_data['Rating'], errors='coerce')
+# Filtro por valor na coluna selecionada
+filter_value = st.sidebar.text_input(f'Filtrar por {selected_column}:')
 
-# Remover linhas com valores nulos na coluna 'Rating' após a conversão
-filtered_data = filtered_data.dropna(subset=['Rating'])
+# Aplicar filtro
+filtered_data = data
+if filter_value:
+    filtered_data = data[data[selected_column].astype(str).str.contains(filter_value, na=False)]
 
-# Agrupar por 'Release Year' e calcular a média dos Ratings
-ratings_by_year = filtered_data.groupby('Release Year')['Rating'].mean().reset_index()
-
-# Configurações do gráfico
-plt.figure(figsize=(10, 6))
-sns.lineplot(x='Release Year', y='Rating', data=ratings_by_year)
-plt.title('Média de Rating dos Filmes ao Longo dos Anos')
-plt.xlabel('Ano de Lançamento')
-plt.ylabel('Rating Médio')
-plt.grid(True)
-
-# Exibir o gráfico usando o Streamlit
-st.pyplot(plt)
+# Exibir gráficos baseados no tipo selecionado
+st.title(f'Gráfico de {chart_type} para {selected_column}')
+if chart_type == 'Barra':
+    if selected_column in string_columns:
+        values_count = filtered_data[selected_column].value_counts()
+        st.bar_chart(values_count)
+    elif selected_column in integer_columns:
+        st.warning('Selecione uma coluna categórica para o gráfico de barras.')
+elif chart_type == 'Dispersão':
+    if selected_column in integer_columns:
+        x_axis = st.selectbox('Selecione a coluna para o eixo x:', integer_columns)
+        scatterplot = sns.scatterplot(x=x_axis, y=selected_column, data=filtered_data)
+        st.pyplot()
+    else:
+        st.warning('Selecione uma coluna numérica para o gráfico de dispersão.')
