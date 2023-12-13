@@ -29,6 +29,19 @@ filtered_data = data[data[selected_column].str.contains(filter_value, na=False)]
 st.write(f"Estatísticas de '{filter_value}' em '{selected_column}':")
 st.write(filtered_data.describe())
 
+# Filtro por valor na coluna selecionada apenas se for uma coluna de texto
+if data[selected_column].dtype == 'object':  # Verifica se é uma coluna de texto/string
+    filtered_data = data[data[selected_column].str.contains(filter_value, na=False)]
+else:
+    # Se não for uma coluna de texto, filtra sem usar o método .str.contains()
+    filtered_data = data[data[selected_column] == filter_value]
+
+# Exibir estatísticas básicas dos dados filtrados
+st.write(f"Estatísticas de '{filter_value}' em '{selected_column}':")
+st.write(filtered_data.describe())
+
+# Resto do código para os gráficos e visualizações...
+
 # Gráfico de barras para contagem de filmes por gênero
 if selected_column == 'Main Genres':
     genre_counts = filtered_data['Main Genres'].value_counts()
@@ -53,17 +66,4 @@ elif selected_column == 'Release Year':
 # Mostra os dados filtrados
 st.write("Dados Filtrados:")
 st.write(filtered_data)
-
-# Filtro por valor na coluna selecionada apenas se for uma coluna de texto
-if data[selected_column].dtype == 'object':  # Verifica se é uma coluna de texto/string
-    filtered_data = data[data[selected_column].str.contains(filter_value, na=False)]
-else:
-    # Se não for uma coluna de texto, filtra sem usar o método .str.contains()
-    filtered_data = data[data[selected_column] == filter_value]
-
-# Exibir estatísticas básicas dos dados filtrados
-st.write(f"Estatísticas de '{filter_value}' em '{selected_column}':")
-st.write(filtered_data.describe())
-
-# Resto do código para os gráficos e visualizações...
 
