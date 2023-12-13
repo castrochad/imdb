@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Carrega o arquivo CSV
+# Carregar os dados
 @st.cache
 def load_data(file_path):
     return pd.read_csv(file_path)
@@ -11,58 +11,34 @@ def load_data(file_path):
 file_path = 'IMDbMovies.csv'
 data = load_data(file_path)
 
-# Define as opções de filtro
-available_columns = [
-    'Director', 'Writer', 'Main Genres', 'Motion Picture Rating',
-    'Rating', 'Number of Ratings', 'Budget',
-    'Gross in US & Canada', 'Gross worldwide', 'Opening Weekend Gross in US & Canada'
-]
+# Obter as colunas de dados inteiros e categóricos
+integer_columns = data.select_dtypes(include='int64').columns.tolist()
+string_columns = data.select_dtypes(include='object').columns.tolist()
 
-# Adicionando a opção 'Release Year' de filtragem condicionalmente
-if 'Release Year' in data.columns:
-    available_columns.append('Release Year')
-
-# Seleciona a coluna para filtro
-selected_column = st.sidebar.selectbox('Selecione a coluna para filtro:', available_columns)
+# Sidebar para selecionar o tipo de gráfico e a coluna
+chart_type = st.sidebar.selectbox('Selecione o tipo de gráfico:', ['Barra', 'Dispersão'])
+selected_column = st.sidebar.selectbox('Selecione a coluna:', string_columns + integer_columns)
 
 # Filtro por valor na coluna selecionada
-filter_value = ""
-if selected_column != 'Release Year':
-    filter_value = st.sidebar.text_input(f'Filtrar por {selected_column}:')
+filter_value = st.sidebar.text_input(f'Filtrar por {selected_column}:')
 
-# Aplica a filtragem
-if filter_value or selected_column == 'Release Year':
-    if selected_column == 'Release Year':
-        filter_value = st.sidebar.text_input(f'Filtrar por {selected_column}:')
+# Aplicar filtro
+filtered_data = data
+if filter_value:
     filtered_data = data[data[selected_column].astype(str).str.contains(filter_value, na=False)]
-    
-    # Exibir estatísticas básicas dos dados filtrados
-    st.write(f"Estatísticas de '{filter_value}' em '{selected_column}':")
-    st.write(filtered_data.describe())
 
-    # Resto do código para os gráficos e visualizações...
-    if selected_column == 'Main Genres':
-        genre_counts = filtered_data['Main Genres'].value_counts()
-        st.write("Contagem de filmes por gênero:")
-        st.bar_chart(genre_counts)
-
-    elif selected_column == 'Budget':
-        st.write("Gráfico de dispersão - Orçamento vs Lucro Bruto:")
-        sns.set(style="whitegrid")
-        scatterplot = sns.scatterplot(x='Budget', y='Gross worldwide', data=filtered_data)
+# Exibir gráficos baseados no tipo selecionado
+st.title(f'Gráfico de {chart_type} para {selected_column}')
+if chart_type == 'Barra':
+    if selected_column in string_columns:
+        values_count = filtered_data[selected_column].value_counts()
+        st.bar_chart(values_count)
+    elif selected_column in integer_columns:
+        st.warning('Selecione uma coluna categórica para o gráfico de barras.')
+elif chart_type == 'Dispersão':
+    if selected_column in integer_columns:
+        x_axis = st.selectbox('Selecione a coluna para o eixo x:', integer_columns)
+        scatterplot = sns.scatterplot(x=x_axis, y=selected_column, data=filtered_data)
         st.pyplot()
-
-    elif selected_column == 'Release Year':
-        st.write("Gráfico de barras - Avaliação por Ano de Lançamento:")
-        average_rating_per_year = filtered_data.groupby('Release Year')['Rating'].mean()
-        st.bar_chart(average_rating_per_year)
-
-    # Adicione mais condições conforme necessário para outras colunas selecionadas
-
-    # Mostra os dados filtrados
-    st.write("Dados Filtrados:")
-    st.write(filtered_data)
-else:
-    # Se não houver valor de filtro, exibe apenas os dados originais
-    st.write("Dados Originais:")
-    st.write(data)
+    else:
+        st.warning('Selecione uma coluna numérica para o gráfico de dispersão.')
