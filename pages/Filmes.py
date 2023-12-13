@@ -17,6 +17,12 @@ filtered_data = data[(data['Rating'].notnull()) & (data['Release Year'].notnull(
 # Converter a coluna 'Release Year' para o tipo inteiro (caso não esteja)
 filtered_data['Release Year'] = filtered_data['Release Year'].astype(int)
 
+# Converter a coluna 'Rating' para numérico
+filtered_data['Rating'] = pd.to_numeric(filtered_data['Rating'], errors='coerce')
+
+# Remover linhas com valores nulos na coluna 'Rating' após a conversão
+filtered_data = filtered_data.dropna(subset=['Rating'])
+
 # Agrupar por 'Release Year' e calcular a média dos Ratings
 ratings_by_year = filtered_data.groupby('Release Year')['Rating'].mean().reset_index()
 
