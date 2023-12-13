@@ -21,42 +21,46 @@ available_columns = [
 # Seleciona a coluna para filtro
 selected_column = st.sidebar.selectbox('Selecione a coluna para filtro:', available_columns)
 
-# Filtro por valor na coluna selecionada
-filter_value = st.sidebar.text_input(f'Filtrar por {selected_column}:')
-filtered_data = data[data[selected_column].str.contains(filter_value, na=False)]
-
-# Exibir estatísticas básicas dos dados filtrados
-st.write(f"Estatísticas de '{filter_value}' em '{selected_column}':")
-st.write(filtered_data.describe())
-
-# Gráfico de barras para contagem de filmes por gênero
-if selected_column == 'Main Genres':
-    genre_counts = filtered_data['Main Genres'].value_counts()
-    st.write("Contagem de filmes por gênero:")
-    st.bar_chart(genre_counts)
-
-# Gráfico de dispersão para orçamento versus lucro bruto
-elif selected_column == 'Budget':
-    st.write("Gráfico de dispersão - Orçamento vs Lucro Bruto:")
-    sns.set(style="whitegrid")
-    scatterplot = sns.scatterplot(x='Budget', y='Gross worldwide', data=filtered_data)
-    st.pyplot()
-
-# Gráfico de barras para avaliação por ano de lançamento
-elif selected_column == 'Release Year':
-    st.write("Gráfico de barras - Avaliação por Ano de Lançamento:")
-    average_rating_per_year = filtered_data.groupby('Release Year')['Rating'].mean()
-    st.bar_chart(average_rating_per_year)
-
-# Adicione mais condições conforme necessário para outras colunas selecionadas
-
-# Mostra os dados filtrados
-st.write("Dados Filtrados:")
-st.write(filtered_data)
-
 # Filtro por valor na coluna selecionada apenas se for uma coluna de texto
 if data[selected_column].dtype == 'object':  # Verifica se é uma coluna de texto/string
+    filter_value = st.sidebar.text_input(f'Filtrar por {selected_column}:')
     filtered_data = data[data[selected_column].str.contains(filter_value, na=False)]
+    st.write(f"Estatísticas de '{filter_value}' em '{selected_column}':")
+    st.write(filtered_data.describe())
+
+    # Resto do código para os gráficos e visualizações...
+    if selected_column == 'Main Genres':
+        genre_counts = filtered_data['Main Genres'].value_counts()
+        st.write("Contagem de filmes por gênero:")
+        st.bar_chart(genre_counts)
+
+    elif selected_column == 'Budget':
+        st.write("Gráfico de dispersão - Orçamento vs Lucro Bruto:")
+        sns.set(style="whitegrid")
+        scatterplot = sns.scatterplot(x='Budget', y='Gross worldwide', data=filtered_data)
+        st.pyplot()
+
+    elif selected_column == 'Release Year':
+        st.write("Gráfico de barras - Avaliação por Ano de Lançamento:")
+        average_rating_per_year = filtered_data.groupby('Release Year')['Rating'].mean()
+        st.bar_chart(average_rating_per_year)
+
+    # Adicione mais condições conforme necessário para outras colunas selecionadas
+
+    # Mostra os dados filtrados
+    st.write("Dados Filtrados:")
+    st.write(filtered_data)
+
 else:
     # Se não for uma coluna de texto, filtra sem usar o método .str.contains()
+    filter_value = st.sidebar.text_input(f'Filtrar por {selected_column}:')
     filtered_data = data[data[selected_column] == filter_value]
+    st.write(f"Estatísticas de '{filter_value}' em '{selected_column}':")
+    st.write(filtered_data.describe())
+
+    # Resto do código para os gráficos e visualizações...
+    # (pode ser igual ao anterior, adaptado para filtros não baseados em texto)
+
+    # Mostra os dados filtrados
+    st.write("Dados Filtrados:")
+    st.write(filtered_data)
