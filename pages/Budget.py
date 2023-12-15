@@ -1,34 +1,40 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 # Carregar os dados
-@st.cache
-def load_data(file_path):
-    return pd.read_csv(file_path)
-
 file_path = 'IMDbMovies.csv'
-data = load_data(file_path)
+data = pd.read_csv(file_path)
 
-# Top 10 filmes mais caros (budget) analisando o lucro e valor arrecadado na semana de estreia
-top_10_budget = data.nlargest(10, 'Budget')
-st.subheader('Top 10 Filmes Mais Caros (Budget)')
-st.write(top_10_budget)
+# Preparar os dados para gráfico dos maiores budgets
+top_budget = data.nlargest(10, 'Budget')
+plt.figure(figsize=(10, 6))
+plt.barh(top_budget['Title'], top_budget['Budget'])
+plt.xlabel('Budget')
+plt.title('Top 10 Maiores Budgets')
+st.pyplot(plt)
 
-# Gráfico - Orçamento em filmes ao passar dos anos
-st.subheader('Orçamento dos Filmes ao Longo dos Anos')
+# Gráfico dos maiores Gross Worldwide
+top_gross = data.nlargest(10, 'Gross worldwide')
+plt.figure(figsize=(10, 6))
+plt.barh(top_gross['Title'], top_gross['Gross worldwide'])
+plt.xlabel('Gross Worldwide')
+plt.title('Top 10 Maiores Gross Worldwide')
+st.pyplot(plt)
+
+# Gráfico de orçamento ao passar dos anos
 budget_over_years = data.groupby('Release Year')['Budget'].sum()
-st.line_chart(budget_over_years)
+plt.figure(figsize=(10, 6))
+plt.plot(budget_over_years, marker='o')
+plt.xlabel('Ano de Lançamento')
+plt.ylabel('Orçamento Total')
+plt.title('Orçamento ao Passar dos Anos')
+st.pyplot(plt)
 
-# Top 10 filmes de maior bilheteria (gross worldwide) analisando a percentagem no US|Canada e Open Weekend
-top_10_gross = data.nlargest(10, 'Gross worldwide')
-top_10_gross['pct_US_Canada'] = top_10_gross['Gross in US & Canada'] / top_10_gross['Gross worldwide']
-top_10_gross['pct_Open_Weekend'] = top_10_gross['Opening Weekend Gross in US & Canada'] / top_10_gross['Gross worldwide']
-st.subheader('Top 10 Filmes de Maior Bilheteria')
-st.write(top_10_gross)
-
-# Gráfico - Motion Picture Rating por número de votos
-st.subheader('Motion Picture Rating por Número de Votos')
-sns.scatterplot(x='Motion Picture Rating', y='Number of Ratings', data=data)
-st.pyplot()
+# Gráfico dos maiores Motion Picture Rating
+top_rating = data.nlargest(10, 'Motion Picture Rating')
+plt.figure(figsize=(10, 6))
+plt.barh(top_rating['Title'], top_rating['Motion Picture Rating'])
+plt.xlabel('Motion Picture Rating')
+plt.title('Top 10 Maiores Motion Picture Rating')
+st.pyplot(plt)
