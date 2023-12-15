@@ -1,7 +1,5 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 # Carregar os dados
 @st.cache
@@ -11,20 +9,24 @@ def load_data(file_path):
 file_path = 'IMDbMovies.csv'
 data = load_data(file_path)
 
-# Ordenar os dados pelos Ratings em ordem decrescente
-sorted_data = data.sort_values(by='Rating', ascending=False)
+# Filtrar por Release Year
+selected_year = st.sidebar.selectbox('Selecione o ano de lançamento:', data['Release Year'].unique())
+filtered_by_year = data[data['Release Year'] == selected_year]
 
-# Selecionar os top 10 Ratings
-top_10_ratings = sorted_data.head(10)
+# Filtrar por Runtime
+runtime_1h = filtered_by_year[filtered_by_year['Runtime'] == '1h']
+runtime_2h = filtered_by_year[filtered_by_year['Runtime'] == '2h']
+runtime_3h = filtered_by_year[filtered_by_year['Runtime'] == '3h']
 
-# Gráfico de barras para os top 10 Ratings
-plt.figure(figsize=(10, 6))
-sns.barplot(x='Rating', y='Title', data=top_10_ratings, palette='viridis')
-plt.title('Top 10 Ratings')
-plt.xlabel('Rating')
-plt.ylabel('Título do Filme')
-plt.xticks(rotation=45)
-plt.tight_layout()
+# Exibir os resultados
+st.write(f"Filmes lançados no ano de {selected_year}:")
+st.write(filtered_by_year)
 
-# Exibir o gráfico usando Streamlit
-st.pyplot(plt)
+st.write("Filmes com duração de 1h:")
+st.write(runtime_1h)
+
+st.write("Filmes com duração de 2h:")
+st.write(runtime_2h)
+
+st.write("Filmes com duração de 3h:")
+st.write(runtime_3h)
