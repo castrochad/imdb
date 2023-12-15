@@ -25,9 +25,9 @@ if not selected_info.empty:
 
     # Cálculo dos percentuais
     gross_values = [
-        selected_info['Gross in US & Canada'].values[0],
-        selected_info['Opening Weekend Gross in US & Canada'].values[0],
-        selected_info['Gross worldwide'].values[0]
+        float(selected_info['Gross in US & Canada'].values[0]),
+        float(selected_info['Opening Weekend Gross in US & Canada'].values[0]),
+        float(selected_info['Gross worldwide'].values[0])
     ]
     labels = ['Gross in US & Canada', 'Opening Weekend Gross in US & Canada', 'Gross worldwide']
 
