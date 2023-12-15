@@ -37,17 +37,18 @@ if not top_gross.empty:
 else:
     st.write('Não há dados disponíveis para os 10 maiores ganhos globais.')
 
-# Gráfico de Budget geral por Release Year
-budget_by_year = data.groupby('Release Year')['Budget'].sum().reset_index()
-if not budget_by_year.empty:
+
+# Gráfico dos 10 maiores Ratings
+top_rating = data.sort_values('Rating', ascending=False).head(10)
+if not top_rating.empty:
     plt.figure(figsize=(10, 6))
-    plt.bar(budget_by_year['Release Year'], budget_by_year['Budget'])
-    plt.xlabel('Ano de Lançamento')
-    plt.ylabel('Orçamento Total')
-    plt.title('Orçamento Geral por Ano de Lançamento')
-    img_budget_year = 'budget_by_year.png'
-    plt.savefig(img_budget_year, bbox_inches='tight')
-    st.image(img_budget_year)
+    plt.barh(top_rating['Title'], top_rating['Rating'])
+    plt.xlabel('Rating')
+    plt.title('Top 10 Maiores Ratings')
+    img_rating = 'top_10_ratings.png'
+    plt.savefig(img_rating, bbox_inches='tight')
+    st.image(img_rating)
     plt.close()
 else:
-    st.write('Não há dados disponíveis para o orçamento geral por ano de lançamento.')
+    st.write('Não há dados disponíveis para os 10 maiores ratings.')
+
