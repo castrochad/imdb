@@ -11,8 +11,11 @@ def load_data(file_path):
 file_path = 'IMDbMovies.csv'
 data = load_data(file_path)
 
-# Ordenar os dados pelos Ratings em ordem decrescente e pegar os top 10
-top_10_ratings = data.nlargest(10, 'Rating')
+# Ordenar os dados pelos Ratings em ordem decrescente
+sorted_data = data.sort_values(by='Rating', ascending=False)
+
+# Selecionar os top 10 Ratings
+top_10_ratings = sorted_data.head(10)
 
 # Gráfico de barras para os top 10 Ratings
 plt.figure(figsize=(10, 6))
