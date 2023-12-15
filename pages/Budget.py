@@ -8,7 +8,7 @@ data = pd.read_csv(file_path)
 
 # Gráfico dos maiores Budgets
 st.subheader("Top 10 Maiores Budgets")
-top_budget = data.nlargest(10, 'Budget')
+top_budget = data.sort_values('Budget', ascending=False).head(10)
 plt.figure(figsize=(10, 6))
 plt.barh(top_budget['Title'], top_budget['Budget'])
 plt.xlabel('Budget')
@@ -17,7 +17,7 @@ st.pyplot()
 
 # Gráfico dos maiores Gross Worldwide
 st.subheader("Top 10 Maiores Gross Worldwide")
-top_gross = data.nlargest(10, 'Gross worldwide')
+top_gross = data.sort_values('Gross worldwide', ascending=False).head(10)
 plt.figure(figsize=(10, 6))
 plt.barh(top_gross['Title'], top_gross['Gross worldwide'])
 plt.xlabel('Gross Worldwide')
@@ -36,7 +36,7 @@ st.pyplot()
 
 # Gráfico dos maiores Motion Picture Rating
 st.subheader("Top 10 Maiores Motion Picture Rating")
-top_rating = data.nlargest(10, 'Motion Picture Rating')
+top_rating = data.sort_values('Motion Picture Rating', ascending=False).head(10)
 plt.figure(figsize=(10, 6))
 plt.barh(top_rating['Title'], top_rating['Motion Picture Rating'])
 plt.xlabel('Motion Picture Rating')
