@@ -40,3 +40,13 @@ if not selected_info.empty:
         st.write('As colunas necessárias para criar o gráfico não estão presentes no conjunto de dados.')
 else:
     st.write('Nenhuma informação disponível para o filme selecionado.')
+if not selected_info.empty:
+    st.subheader(f'Informações do filme: {selected_movie}')
+
+    if not pd.isnull(gross_values).any():
+        fig, ax = plt.subplots()
+        ax.pie(gross_values, labels=labels, autopct='%1.1f%%', startangle=90, textprops={'fontsize': 12})  # Adicionei um tamanho de fonte para o texto no gráfico
+        ax.axis('equal')  # Assegura que o gráfico de pizza seja desenhado como um círculo.
+        st.pyplot(fig)
+    else:
+        st.write('Há valores ausentes para criar o gráfico de pizza.')
