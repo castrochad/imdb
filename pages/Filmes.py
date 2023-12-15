@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
 
 # Carregar os dados
 file_path = 'IMDbMovies.csv'
@@ -21,5 +22,14 @@ if not selected_info.empty:
     st.write('Runtime:', selected_info['Runtime'].values[0])
     st.write('Budget:', selected_info['Budget'].values[0])
     st.write('Gross Worldwide:', selected_info['Gross worldwide'].values[0])
+
+    # Gráfico com o valor de Gross worldwide, Gross in US & Canada e Opening Weekend Gross
+    gross_values = selected_info[['Gross worldwide', 'Gross in US & Canada', 'Opening Weekend Gross in US & Canada']].values[0]
+    labels = ['Gross worldwide', 'Gross in US & Canada', 'Opening Weekend Gross']
+    
+    fig, ax = plt.subplots()
+    ax.pie(gross_values, labels=labels, autopct='%1.1f%%', startangle=90)
+    ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    st.pyplot(fig)
 else:
     st.write('Nenhuma informação disponível para o filme selecionado.')
