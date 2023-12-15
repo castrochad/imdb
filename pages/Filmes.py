@@ -25,10 +25,13 @@ if not selected_info.empty:
 
     # Cálculo dos percentuais
     gross_values = [
-        float(selected_info['Gross in US & Canada'].values[0]),
-        float(selected_info['Opening Weekend Gross in US & Canada'].values[0]),
-        float(selected_info['Gross worldwide'].values[0])
+        selected_info['Gross in US & Canada'].values[0],
+        selected_info['Opening Weekend Gross in US & Canada'].values[0],
+        selected_info['Gross worldwide'].values[0]
     ]
+    
+    st.write('Valores brutos:', gross_values)
+    
     labels = ['Gross in US & Canada', 'Opening Weekend Gross in US & Canada', 'Gross worldwide']
 
     if not pd.isnull(gross_values).any():
