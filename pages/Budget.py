@@ -6,6 +6,13 @@ import matplotlib.pyplot as plt
 file_path = 'IMDbMovies.csv'
 data = pd.read_csv(file_path)
 
+# Converter colunas para numérico
+data['Budget'] = pd.to_numeric(data['Budget'], errors='coerce')
+data['Gross worldwide'] = pd.to_numeric(data['Gross worldwide'], errors='coerce')
+
+# Remover linhas com valores nulos
+data = data.dropna(subset=['Budget', 'Gross worldwide'])
+
 # Preparar os dados para gráfico dos maiores budgets
 top_budget = data.nlargest(10, 'Budget')
 plt.figure(figsize=(10, 6))
