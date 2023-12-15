@@ -23,30 +23,20 @@ if not selected_info.empty:
     st.write('Budget:', selected_info['Budget'].values[0])
     st.write('Gross Worldwide:', selected_info['Gross worldwide'].values[0])
 
-    # Verificar se as colunas necessárias para o gráfico estão presentes
-    if 'Gross worldwide' in selected_info.columns and 'Gross in US & Canada' in selected_info.columns and 'Opening Weekend Gross in US & Canada' in selected_info.columns:
-        gross_values = selected_info[['Gross worldwide', 'Gross in US & Canada', 'Opening Weekend Gross in US & Canada']].values[0]
-        labels = ['Gross worldwide', 'Gross in US & Canada', 'Opening Weekend Gross']
-
-        # Verificar se há valores nulos
-        if not pd.isnull(gross_values).any():
-            fig, ax = plt.subplots()
-            ax.pie(gross_values, labels=labels, autopct='%1.1f%%', startangle=90)
-            ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-            st.pyplot(fig)
-        else:
-            st.write('Há valores ausentes para criar o gráfico de pizza.')
-    else:
-        st.write('As colunas necessárias para criar o gráfico não estão presentes no conjunto de dados.')
-else:
-    st.write('Nenhuma informação disponível para o filme selecionado.')
-if not selected_info.empty:
-    st.subheader(f'Informações do filme: {selected_movie}')
+    # Cálculo dos percentuais
+    gross_values = [
+        selected_info['Gross in US & Canada'].values[0],
+        selected_info['Opening Weekend Gross in US & Canada'].values[0],
+        selected_info['Gross worldwide'].values[0]
+    ]
+    labels = ['Gross in US & Canada', 'Opening Weekend Gross in US & Canada', 'Gross worldwide']
 
     if not pd.isnull(gross_values).any():
         fig, ax = plt.subplots()
-        ax.pie(gross_values, labels=labels, autopct='%1.1f%%', startangle=90, textprops={'fontsize': 12})  # Adicionei um tamanho de fonte para o texto no gráfico
-        ax.axis('equal')  # Assegura que o gráfico de pizza seja desenhado como um círculo.
+        ax.pie(gross_values, labels=labels, autopct='%1.1f%%', startangle=90, textprops={'fontsize': 12})
+        ax.axis('equal')
         st.pyplot(fig)
     else:
         st.write('Há valores ausentes para criar o gráfico de pizza.')
+else:
+    st.write('Nenhuma informação disponível para o filme selecionado.')
