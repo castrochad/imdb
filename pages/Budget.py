@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 file_path = 'IMDbMovies.csv'
 data = pd.read_csv(file_path)
 
-# Remover linhas com valores ausentes na coluna 'Budget'
-data = data.dropna(subset=['Budget'])
+# Remover linhas com valores ausentes na coluna 'Budget' e 'Gross worldwide'
+data = data.dropna(subset=['Budget', 'Gross worldwide'])
 
 # Gráfico dos 10 maiores Budgets
 top_budget = data.sort_values('Budget', ascending=False).head(10)
@@ -16,7 +16,6 @@ if not top_budget.empty:
     plt.barh(top_budget['Title'], top_budget['Budget'])
     plt.xlabel('Orçamento')
     plt.title('Top 10 Maiores Orçamentos')
-    # Converter o gráfico em imagem
     img_budget = 'top_10_budgets.png'
     plt.savefig(img_budget, bbox_inches='tight')
     st.image(img_budget)
@@ -31,7 +30,6 @@ if not top_gross.empty:
     plt.barh(top_gross['Title'], top_gross['Gross worldwide'])
     plt.xlabel('Gross Worldwide')
     plt.title('Top 10 Maiores Ganhas Globais')
-    # Converter o gráfico em imagem
     img_gross = 'top_10_gross.png'
     plt.savefig(img_gross, bbox_inches='tight')
     st.image(img_gross)
@@ -47,7 +45,6 @@ if not budget_by_year.empty:
     plt.xlabel('Ano de Lançamento')
     plt.ylabel('Orçamento Total')
     plt.title('Orçamento Geral por Ano de Lançamento')
-    # Converter o gráfico em imagem
     img_budget_year = 'budget_by_year.png'
     plt.savefig(img_budget_year, bbox_inches='tight')
     st.image(img_budget_year)
