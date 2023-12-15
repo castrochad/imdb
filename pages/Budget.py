@@ -16,7 +16,11 @@ if not top_budget.empty:
     plt.barh(top_budget['Title'], top_budget['Budget'])
     plt.xlabel('Orçamento')
     plt.title('Top 10 Maiores Orçamentos')
-    st.pyplot()
+    # Converter o gráfico em imagem
+    img_budget = 'top_10_budgets.png'
+    plt.savefig(img_budget, bbox_inches='tight')
+    st.image(img_budget)
+    plt.close()
 else:
     st.write('Não há dados disponíveis para os 10 maiores orçamentos.')
 
@@ -27,7 +31,11 @@ if not top_gross.empty:
     plt.barh(top_gross['Title'], top_gross['Gross worldwide'])
     plt.xlabel('Gross Worldwide')
     plt.title('Top 10 Maiores Ganhas Globais')
-    st.pyplot()
+    # Converter o gráfico em imagem
+    img_gross = 'top_10_gross.png'
+    plt.savefig(img_gross, bbox_inches='tight')
+    st.image(img_gross)
+    plt.close()
 else:
     st.write('Não há dados disponíveis para os 10 maiores ganhos globais.')
 
@@ -39,6 +47,10 @@ if not budget_by_year.empty:
     plt.xlabel('Ano de Lançamento')
     plt.ylabel('Orçamento Total')
     plt.title('Orçamento Geral por Ano de Lançamento')
-    st.pyplot()
+    # Converter o gráfico em imagem
+    img_budget_year = 'budget_by_year.png'
+    plt.savefig(img_budget_year, bbox_inches='tight')
+    st.image(img_budget_year)
+    plt.close()
 else:
     st.write('Não há dados disponíveis para o orçamento geral por ano de lançamento.')
