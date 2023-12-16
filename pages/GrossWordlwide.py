@@ -5,32 +5,33 @@ import pandas as pd
 file_path = 'IMDbMovies.csv'
 data = pd.read_csv(file_path)
 
-# Verificar e tratar valores nulos e zeros em 'Budget' e 'Gross worldwide'
-data['Budget'] = pd.to_numeric(data['Budget'], errors='coerce')
-data['Gross worldwide'] = pd.to_numeric(data['Gross worldwide'], errors='coerce')
+# Adicionar um seletor de filmes
+titles = data['Title'].unique().tolist()
+selected_movie = st.selectbox('Selecione um filme:', titles)
 
-# Remover linhas com valores nulos em 'Budget' e 'Gross worldwide'
-data = data.dropna(subset=['Budget', 'Gross worldwide'])
+# Filtrar os dados com base no filme selecionado
+selected_info = data[data['Title'] == selected_movie]
 
-# Verificar se existem valores iguais a zero em 'Budget' e 'Gross worldwide'
-zero_budget = data['Budget'] == 0
-zero_gross = data['Gross worldwide'] == 0
+if not selected_info.empty:
+    # Calcular e exibir as informações
+    budget = selected_info['Budget'].values[0]
+    gross_worldwide = selected_info['Gross worldwide'].values[0]
+    gross_us_canada = selected_info['Gross in US & Canada'].values[0]
+    opening_weekend_us_canada = selected_info['Opening Weekend Gross in US & Canada'].values[0]
+    rating = selected_info['Rating'].values[0]
+    num_ratings = selected_info['Number of Ratings'].values[0]
 
-# Exibir contagem de valores nulos, zeros e linhas vazias
-st.write(f'Valores nulos em Budget: {data["Budget"].isnull().sum()}')
-st.write(f'Valores nulos em Gross worldwide: {data["Gross worldwide"].isnull().sum()}')
-st.write(f'Valores zero em Budget: {zero_budget.sum()}')
-st.write(f'Valores zero em Gross worldwide: {zero_gross.sum()}')
+    st.write(f'Informações do filme: {selected_movie}')
+    st.write(f'Budget: {budget}')
+    st.write(f'Gross worldwide: {gross_worldwide}')
+    st.write(f'Pct_do_orcamento: {budget / gross_worldwide * 100:.2f}%')
+    st.write(f'Gross in US & Canada: {gross_us_canada}')
+    st.write(f'Opening Weekend Gross in US & Canada: {opening_weekend_us_canada}')
+    st.write(f'Pct_gross_us_canada: {gross_us_canada / gross_worldwide * 100:.2f}%')
+    st.write(f'Pct_opening_weekend: {opening_weekend_us_canada / gross_worldwide * 100:.2f}%')
+    st.write(f'Rating: {rating}')
+    st.write(f'Number of Ratings: {num_ratings}')
+    st.write(f'Rating_rel_number_of_ratings: {rating / num_ratings:.2f}')
 
-# Calcular a porcentagem do orçamento em relação ao 'Gross worldwide'
-data['pct_do_orcamento'] = (data['Budget'] / data['Gross worldwide']) * 100
-
-# Calcular as porcentagens para 'Gross in US & Canada' e 'Opening Weekend Gross in US & Canada'
-data['pct_gross_us_canada'] = (data['Gross in US & Canada'] / data['Gross worldwide']) * 100
-data['pct_opening_weekend'] = (data['Opening Weekend Gross in US & Canada'] / data['Gross worldwide']) * 100
-
-# Criar coluna de relação entre Rating e Number of Ratings
-data['rating_rel_number_of_ratings'] = data['Rating'] / data['Number of Ratings']
-
-# Exibir as colunas processadas
-st.write(data[['Budget', 'Gross worldwide', 'pct_do_orcamento', 'Gross in US & Canada', 'Opening Weekend Gross in US & Canada', 'pct_gross_us_canada', 'pct_opening_weekend', 'Rating', 'Number of Ratings', 'rating_rel_number_of_ratings']])
+else:
+    st.write('Nenhuma informação disponível para o filme selecionado.')
