@@ -39,9 +39,9 @@ if not selected_info.empty:
     gross_us_canada = clean_and_convert(gross_us_canada)
     opening_weekend_gross = clean_and_convert(opening_weekend_gross)
     
-    st.write(f'Gross worldwide (cleaned): {gross_worldwide}')
-    st.write(f'Gross in US & Canada (cleaned): {gross_us_canada}')
-    st.write(f'Opening Weekend Gross in US & Canada (cleaned): {opening_weekend_gross}')
+    st.write(f'Gross worldwide: {gross_worldwide}')
+    st.write(f'Gross in US & Canada: {gross_us_canada}')
+    st.write(f'Opening Weekend Gross in US & Canada: {opening_weekend_gross}')
     
     # Calcular percentuais
     if gross_worldwide:
