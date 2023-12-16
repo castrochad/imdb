@@ -13,7 +13,7 @@ selected_movie = st.selectbox('Selecione um filme:', titles)
 selected_info = data[data['Title'] == selected_movie]
 
 if not selected_info.empty:
-    # Calcular e exibir as informações
+    # Obter informações específicas do filme selecionado
     budget = selected_info['Budget'].values[0]
     gross_worldwide = selected_info['Gross worldwide'].values[0]
     gross_us_canada = selected_info['Gross in US & Canada'].values[0]
@@ -21,14 +21,19 @@ if not selected_info.empty:
     rating = selected_info['Rating'].values[0]
     num_ratings = selected_info['Number of Ratings'].values[0]
 
+    # Verificar se os valores são diferentes de zero antes de calcular as porcentagens
+    pct_do_orcamento = budget / gross_worldwide * 100 if gross_worldwide != 0 else 0
+    pct_gross_us_canada = gross_us_canada / gross_worldwide * 100 if gross_worldwide != 0 else 0
+    pct_opening_weekend = opening_weekend_us_canada / gross_worldwide * 100 if gross_worldwide != 0 else 0
+
     st.write(f'Informações do filme: {selected_movie}')
     st.write(f'Budget: {budget}')
     st.write(f'Gross worldwide: {gross_worldwide}')
-    st.write(f'Pct_do_orcamento: {budget / gross_worldwide * 100:.2f}%')
+    st.write(f'Pct_do_orcamento: {pct_do_orcamento:.2f}%')
     st.write(f'Gross in US & Canada: {gross_us_canada}')
     st.write(f'Opening Weekend Gross in US & Canada: {opening_weekend_us_canada}')
-    st.write(f'Pct_gross_us_canada: {gross_us_canada / gross_worldwide * 100:.2f}%')
-    st.write(f'Pct_opening_weekend: {opening_weekend_us_canada / gross_worldwide * 100:.2f}%')
+    st.write(f'Pct_gross_us_canada: {pct_gross_us_canada:.2f}%')
+    st.write(f'Pct_opening_weekend: {pct_opening_weekend:.2f}%')
     st.write(f'Rating: {rating}')
     st.write(f'Number of Ratings: {num_ratings}')
     st.write(f'Rating_rel_number_of_ratings: {rating / num_ratings:.2f}')
