@@ -6,41 +6,43 @@ import matplotlib.pyplot as plt
 file_path = 'IMDbMovies.csv'
 data = pd.read_csv(file_path)
 
-# Transformar as colunas numéricas necessárias para float
-numeric_columns = ['Budget', 'Gross in US & Canada', 'Gross worldwide', 'Opening Weekend Gross in US & Canada']
-data[numeric_columns] = data[numeric_columns].apply(pd.to_numeric, errors='coerce')
+# Adicionar um seletor de colunas para o usuário
+selected_columns = st.multiselect('Selecione as colunas:', data.columns)
 
-# Agrupar os dados por ano e calcular as estatísticas
-grouped_data = data.groupby('Release Year').agg({
-    'Budget': 'sum',
-    'Gross worldwide': 'sum',
-    'Gross in US & Canada': 'sum',
-    'Opening Weekend Gross in US & Canada': 'sum'
-}).reset_index()
+# Adicionar um seletor de ano
+selected_year = st.slider('Selecione um ano:', int(data['Release Year'].min()), int(data['Release Year'].max()))
 
-# Calcular os percentuais
-grouped_data['Pct_Budget_to_Worldwide'] = (grouped_data['Budget'] / grouped_data['Gross worldwide']) * 100
-grouped_data['Pct_USCanada_to_Worldwide'] = (grouped_data['Gross in US & Canada'] / grouped_data['Gross worldwide']) * 100
-grouped_data['Pct_OpeningWeekend_to_Worldwide'] = (grouped_data['Opening Weekend Gross in US & Canada'] / grouped_data['Gross worldwide']) * 100
+if selected_columns:
+    # Filtrar os dados para o ano selecionado
+    filtered_data = data[data['Release Year'] == selected_year]
 
-# Exibir o seletor de ano
-selected_year = st.selectbox('Selecione um ano:', grouped_data['Release Year'])
+    # Garantir que apenas as colunas numéricas sejam selecionadas
+    numeric_columns = filtered_data.select_dtypes(include='number').columns.tolist()
 
-# Filtrar os dados para o ano selecionado
-selected_info = grouped_data[grouped_data['Release Year'] == selected_year]
+    # Verificar se as colunas selecionadas são numéricas
+    selected_numeric_columns = list(set(selected_columns).intersection(set(numeric_columns)))
 
-# Exibir as informações se houver dados para o ano selecionado
-if not selected_info.empty:
-    st.write(f'Informações para o ano {selected_year}:')
-    st.write(selected_info)
+    if selected_numeric_columns:
+        # Agrupar os dados por ano e calcular as estatísticas
+        grouped_data = filtered_data.groupby('Release Year')[selected_numeric_columns].sum().reset_index()
 
-    # Criar um gráfico para exibir os percentuais
-    plt.figure(figsize=(10, 6))
-    plt.bar(selected_info.columns[4:], selected_info.values[0][4:], color=['blue', 'orange', 'green'])
-    plt.xlabel('Tipos de percentuais')
-    plt.ylabel('Valores em %')
-    plt.title(f'Percentuais para o ano {selected_year}')
-    st.pyplot(plt)
+        # Calcular os percentuais para cada coluna selecionada
+        for col in selected_numeric_columns:
+            grouped_data[f'Pct_{col}_to_Worldwide'] = (grouped_data[col] / grouped_data[col].sum()) * 100
+
+        # Exibir os gráficos
+        st.write(f'Gráficos percentuais para o ano {selected_year}:')
+
+        for col in selected_numeric_columns:
+            plt.figure(figsize=(8, 6))
+            plt.bar(grouped_data['Release Year'], grouped_data[f'Pct_{col}_to_Worldwide'], color='skyblue')
+            plt.xlabel('Ano de lançamento')
+            plt.ylabel(f'Percentual em relação ao total de {col}')
+            plt.title(f'Percentual de {col} por ano de lançamento')
+            st.pyplot(plt)
+
+    else:
+        st.write('Nenhuma coluna numérica foi selecionada!')
 
 else:
-    st.write('Nenhuma informação disponível para o ano selecionado.')
+    st.write('Nenhuma coluna foi selecionada!')
