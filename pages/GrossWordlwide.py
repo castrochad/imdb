@@ -22,8 +22,5 @@ data['pct_opening_weekend'] = (data['Opening Weekend Gross in US & Canada'] / da
 # Criar coluna de relação entre Rating e Number of Ratings
 data['rating_rel_number_of_ratings'] = data['Rating'] / data['Number of Ratings']
 
-# Exibir informações gerais dos dados processados
-st.write(data.info())
-
-# Exibir os primeiros registros dos dados processados
-st.write(data.head())
+# Exibir as colunas processadas
+st.write(data[['Budget', 'Gross worldwide', 'pct_do_orcamento', 'Gross in US & Canada', 'Opening Weekend Gross in US & Canada', 'pct_gross_us_canada', 'pct_opening_weekend', 'Rating', 'Number of Ratings', 'rating_rel_number_of_ratings']])
