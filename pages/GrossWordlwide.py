@@ -24,21 +24,27 @@ if selected_columns:
 
     if selected_numeric_columns:
         # Agrupar os dados por ano e calcular as estatísticas
-        grouped_data = filtered_data.groupby('Release Year')[selected_numeric_columns].sum().reset_index()
+        grouped_data = filtered_data.groupby('Release Year')[selected_numeric_columns].sum()
 
         # Calcular os percentuais para cada coluna selecionada
+        pct_columns = []
         for col in selected_numeric_columns:
-            grouped_data[f'Pct_{col}_to_Worldwide'] = (grouped_data[col] / grouped_data[col].sum()) * 100
+            pct_col_name = f'Pct_{col}_to_Worldwide'
+            grouped_data[pct_col_name] = (grouped_data[col] / grouped_data[col].sum()) * 100
+            pct_columns.append(pct_col_name)
+
+        # Reiniciar o índice
+        grouped_data.reset_index(inplace=True)
 
         # Exibir os gráficos
         st.write(f'Gráficos percentuais para o ano {selected_year}:')
 
-        for col in selected_numeric_columns:
+        for col in pct_columns:
             plt.figure(figsize=(8, 6))
-            plt.bar(grouped_data['Release Year'], grouped_data[f'Pct_{col}_to_Worldwide'], color='skyblue')
+            plt.bar(grouped_data['Release Year'], grouped_data[col], color='skyblue')
             plt.xlabel('Ano de lançamento')
-            plt.ylabel(f'Percentual em relação ao total de {col}')
-            plt.title(f'Percentual de {col} por ano de lançamento')
+            plt.ylabel(f'Percentual em relação ao total')
+            plt.title(f'Percentual por ano de lançamento - {col[4:-13]}')
             st.pyplot(plt)
 
     else:
