@@ -5,18 +5,12 @@ import pandas as pd
 file_path = 'IMDbMovies.csv'
 data = pd.read_csv(file_path)
 
-# Verificar e tratar valores nulos em 'Budget' e 'Gross worldwide'
-null_budget = data['Budget'].isnull()
-null_gross_worldwide = data['Gross worldwide'].isnull()
-zero_budget = data['Budget'] == 0
-zero_gross_worldwide = data['Gross worldwide'] == 0
+# Verificar e tratar valores nulos e zeros em 'Budget' e 'Gross worldwide'
+data['Budget'] = pd.to_numeric(data['Budget'], errors='coerce')
+data['Gross worldwide'] = pd.to_numeric(data['Gross worldwide'], errors='coerce')
 
-# Preencher valores nulos com a média e substituir zeros por média em 'Budget' e 'Gross worldwide'
-mean_budget = data.loc[~(null_budget | zero_budget), 'Budget'].mean()
-mean_gross = data.loc[~(null_gross_worldwide | zero_gross_worldwide), 'Gross worldwide'].mean()
-
-data.loc[null_budget | zero_budget, 'Budget'] = mean_budget
-data.loc[null_gross_worldwide | zero_gross_worldwide, 'Gross worldwide'] = mean_gross
+# Remover linhas com valores nulos em 'Budget' e 'Gross worldwide'
+data = data.dropna(subset=['Budget', 'Gross worldwide'])
 
 # Calcular a porcentagem do orçamento em relação ao 'Gross worldwide'
 data['pct_do_orcamento'] = (data['Budget'] / data['Gross worldwide']) * 100
