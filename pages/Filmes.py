@@ -21,7 +21,6 @@ if not selected_info.empty:
     st.write('Motion Picture Rating:', selected_info['Motion Picture Rating'].values[0])
     st.write('Runtime:', selected_info['Runtime'].values[0])
     st.write('Budget:', selected_info['Budget'].values[0])
-    st.write('Gross Worldwide:', selected_info['Gross worldwide'].values[0])
     
     gross_worldwide = selected_info['Gross worldwide'].values[0]
     gross_us_canada = selected_info['Gross in US & Canada'].values[0]
@@ -41,7 +40,7 @@ if not selected_info.empty:
     
     st.write(f'Gross worldwide: {gross_worldwide}')
     st.write(f'Gross in US & Canada: {gross_us_canada}')
-    st.write(f'Opening Weekend Gross in US & Canada: {opening_weekend_gross}')
+    st.write(f'Opening Weekend Gross: {opening_weekend_gross}')
     
     # Calcular percentuais
     if gross_worldwide:
