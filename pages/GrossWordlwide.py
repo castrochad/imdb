@@ -5,25 +5,28 @@ import pandas as pd
 file_path = 'IMDbMovies.csv'
 data = pd.read_csv(file_path)
 
-# Verificar e substituir valores infinitos ou NaN por zeros
-data = data.replace([float('inf'), -float('inf')], float('nan'))
-data = data.fillna(0)
-
-# Calcular as colunas percentuais
+# Criar coluna pct_do_orcamento (Gross Worldwide / Budget)
 data['pct_do_orcamento'] = data['Gross worldwide'] / data['Budget']
-data['pct_valor_US'] = data['Gross in US & Canada'] / data['Gross worldwide']
-data['pct_valor_Open_Weekend'] = data['Opening Weekend Gross in US & Canada'] / data['Gross worldwide']
 
-# Exibir os dados e gráficos
-st.write("Dados com colunas percentuais:")
-st.write(data.head())
+# Calcular os percentuais para Gross in US & Canada e Opening Weekend Gross in US & Canada
+data['pct_Gross_in_US'] = data['Gross in US & Canada'] / data['Gross worldwide']
+data['pct_Opening_Weekend'] = data['Opening Weekend Gross in US & Canada'] / data['Gross worldwide']
 
-# Gráfico de barras para pct_do_orcamento
-st.write("Gráfico de pct_do_orcamento:")
-bar_chart_budget = data['pct_do_orcamento'].plot(kind='bar')
-st.pyplot(bar_chart_budget)
+# Adicionar um seletor de filmes
+selected_movie = st.selectbox('Selecione um filme:', data['Title'])
 
-# Gráfico de barras para pct_valor_US e pct_valor_Open_Weekend
-st.write("Gráfico de pct_valor_US e pct_valor_Open_Weekend:")
-bar_chart_values = data[['pct_valor_US', 'pct_valor_Open_Weekend']].plot(kind='bar', stacked=True)
-st.pyplot(bar_chart_values)
+# Exibir informações do filme selecionado
+selected_info = data[data['Title'] == selected_movie]
+
+if not selected_info.empty:
+    st.subheader(f'Informações do filme: {selected_movie}')
+    st.write('Rating:', selected_info['Rating'].values[0])
+    st.write('Motion Picture Rating:', selected_info['Motion Picture Rating'].values[0])
+    st.write('Runtime:', selected_info['Runtime'].values[0])
+    st.write('Budget:', selected_info['Budget'].values[0])
+    st.write('Gross Worldwide:', selected_info['Gross worldwide'].values[0])
+    st.write('Percentual do Orçamento:', selected_info['pct_do_orcamento'].values[0])
+    st.write('Percentual de Gross in US & Canada:', selected_info['pct_Gross_in_US'].values[0])
+    st.write('Percentual de Opening Weekend Gross:', selected_info['pct_Opening_Weekend'].values[0])
+else:
+    st.write('Nenhuma informação disponível para o filme selecionado.')
